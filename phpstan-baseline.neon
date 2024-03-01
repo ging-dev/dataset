@@ -1,0 +1,6 @@
+parameters:
+	ignoreErrors:
+		-
+			message: "#^Parameter \\#1 \\.\\.\\.\\$paths of static method Symfony\\\\Component\\\\Filesystem\\\\Path\\:\\:join\\(\\) expects string, string\\|false given\\.$#"
+			count: 2
+			path: src/Command/DatasetGenerateCommand.php
