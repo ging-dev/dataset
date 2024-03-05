@@ -4,12 +4,10 @@ namespace App\MessageHandler;
 
 use App\Entity\Teacher;
 use App\Message\PDF;
-use App\Pipe\CharacterFixer;
 use App\Pipe\NameDetector;
-use App\Pipe\PDFReader;
+use App\Pipe\PDFPipeline;
 use App\Repository\TeacherRepository;
 use App\Service\ZZZCodeAI;
-use League\Pipeline\Pipeline;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 /**
@@ -27,19 +25,16 @@ class PDFHandler
     - Summary of achievements
     PROMPT;
 
-    public function __construct(private ZZZCodeAI $ai, private TeacherRepository $teacherRepository)
-    {
+    public function __construct(
+        private ZZZCodeAI $ai,
+        private TeacherRepository $teacherRepository,
+        private PDFPipeline $pipeline,
+    ) {
     }
 
     public function __invoke(PDF $message): void
     {
-        $pipeline = (new Pipeline())
-            ->pipe(new PDFReader())
-            ->pipe(new CharacterFixer())
-            ->pipe(new NameDetector());
-
-        /** @var ResultType */
-        $result = $pipeline->process((string) $message);
+        $result = $this->pipeline->process((string) $message);
 
         [$name, $context] = $result;
 
