@@ -11,6 +11,16 @@ final class ZZZCodeAI
 
     public const QA_ENDPOINT = '/api/tools/answer-question';
 
+    /**
+     * @var list<string>
+     */
+    public const FIELDS = ['option1', 'option2', 'option3', 'p1', 'p2'];
+
+    /**
+     * @var list<string>
+     */
+    public const OPTIONS = ['Brief answer', 'Professional', 'Vietnamese'];
+
     private HttpClientInterface $client;
 
     public function __construct(HttpClientInterface $client)
@@ -24,27 +34,26 @@ final class ZZZCodeAI
 
     public function ask(string $context, string $question): string
     {
+        $values = array_merge(self::OPTIONS, [$context, $question]);
+
         $content = $this->client->request('POST', self::QA_ENDPOINT, [
-            'json' => [
-                'hasBlocker' => false,
-                'option1' => 'Brief answer',
-                'option2' => 'Professional',
-                'option3' => 'Vietnamese',
-                'p1' => $context,
-                'p2' => $question,
-            ],
+            'json' => array_combine(self::FIELDS, $values),
         ])->getContent();
 
-        if (!preg_match('/zzzredirectmessageidzzz:\s([a-z0-9-]+)/', $content, $matches)) {
+        if (
+            !preg_match(
+                '/zzzredirectmessageidzzz:\s([a-z0-9-]+)/',
+                $content,
+                $matches
+            )
+        ) {
             throw new \RuntimeException('Unexpected error.');
         }
 
         $id = array_pop($matches);
+
         $response = $this->client->request('POST', self::QA_ENDPOINT, [
-            'json' => [
-                'id' => $id,
-                'hasBlocker' => true,
-            ],
+            'json' => ['id' => $id],
         ]);
 
         $buffer = '';
