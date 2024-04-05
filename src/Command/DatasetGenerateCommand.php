@@ -28,7 +28,7 @@ class DatasetGenerateCommand extends Command
         $data = [];
         foreach ($this->teacherRepository->findAll() as $teacher) {
             $data[] = (string) json_encode([
-                'user' => $teacher->getName(),
+                'user' => sprintf('Thông tin giảng viên %s', $teacher->getName()),
                 'assistant' => $teacher->getDescription(),
             ], JSON_UNESCAPED_UNICODE);
         }

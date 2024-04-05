@@ -16,9 +16,8 @@ class PDFHandler
     Give a short description to introduce lecturer of Thai Nguyen University.
 
     Required:
-    - Repeat the lecturer's name several times
-    - Hometown information, only mention provinces and cities
-    - Summary of achievements
+    - Do not mention hometown.
+    - Summary of achievements.
     PROMPT;
 
     public function __construct(
